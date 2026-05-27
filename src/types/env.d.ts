@@ -5,5 +5,6 @@ declare namespace NodeJS {
     DATABASE_URL: string;
     ORIGIN_1: string;
     ORIGIN_2: string;
+    JWT_SECRET: string;
   }
 }

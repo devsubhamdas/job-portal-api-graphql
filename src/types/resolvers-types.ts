@@ -1,4 +1,5 @@
 import type { GraphQLResolveInfo } from 'graphql';
+import type { Context } from '../../context.js';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 /** All built-in and custom scalars, mapped to their actual values */
@@ -153,7 +154,7 @@ export type ResolversParentTypes = {
 };
 
 export type CompanyResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Company'] = ResolversParentTypes['Company'],
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -161,7 +162,7 @@ export type CompanyResolvers<
 };
 
 export type JobResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Job'] = ResolversParentTypes['Job'],
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
@@ -169,7 +170,7 @@ export type JobResolvers<
 };
 
 export type QueryResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
 > = {
   getCompanies?: Resolver<Array<ResolversTypes['Company']>, ParentType, ContextType>;
@@ -178,14 +179,14 @@ export type QueryResolvers<
 };
 
 export type UserResolvers<
-  ContextType = any,
+  ContextType = Context,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User'],
 > = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
 };
 
-export type Resolvers<ContextType = any> = {
+export type Resolvers<ContextType = Context> = {
   Company?: CompanyResolvers<ContextType>;
   Job?: JobResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
