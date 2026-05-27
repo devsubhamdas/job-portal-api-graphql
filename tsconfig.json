@@ -44,6 +44,6 @@
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src"],
-  "files": ["prisma.config.ts"],
+  "files": ["prisma.config.ts", "codegen.ts"],
   "exclude": ["node_modules", "dist"]
 }
