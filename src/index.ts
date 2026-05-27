@@ -4,6 +4,7 @@ import { ApolloServer } from '@apollo/server';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { expressMiddleware } from '@as-integrations/express5';
+import schema from './schema/schema.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -11,16 +12,7 @@ const HOSTNAME = process.env.HOSTNAME || 'localhost';
 
 // apollo config
 const server = new ApolloServer({
-  typeDefs: `#graphql
-    type Query {
-      hello: String!
-    }
-  `,
-  resolvers: {
-    Query: {
-      hello: () => 'hello world',
-    },
-  },
+  schema: schema,
 });
 
 async function startServer() {
