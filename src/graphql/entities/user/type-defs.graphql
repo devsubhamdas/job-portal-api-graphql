@@ -1,8 +1,35 @@
+enum UserRole {
+  ADMIN
+  USER
+}
+
 type User {
   id: ID!
   name: String!
+  email: String!
+  role: UserRole!
+  appliedJobs: [Job!]!
+  ownedJobs: [Job!]!
+}
+
+input SignupInput {
+  name: String!
+  email: String!
+  password: String!
+  role: UserRole!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 type Query {
   me: User!
+}
+
+type Mutation {
+  signup(input: SignupInput): User!
+  login(input: LoginInput): User!
+  logout: Boolean!
 }
