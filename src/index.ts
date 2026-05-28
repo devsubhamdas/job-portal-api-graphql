@@ -4,7 +4,8 @@ import { ApolloServer } from '@apollo/server';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { expressMiddleware } from '@as-integrations/express5';
-import schema from './schema/schema.js';
+import schema from './graphql/schema/schema.js';
+import createContext from './graphql/context/context.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -42,7 +43,9 @@ async function startServer() {
     }),
     cookieParser(),
     express.json(),
-    expressMiddleware(server)
+    expressMiddleware(server, {
+      context: ({ req, res }) => createContext({ req, res }),
+    })
   );
 
   app.listen(PORT, () => {

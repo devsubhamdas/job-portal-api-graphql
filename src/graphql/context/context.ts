@@ -1,5 +1,5 @@
-import { PrismaClient } from './src/generated/prisma/client.js';
-import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../../generated/prisma/client.js';
+import { prisma } from '../../lib/prisma.js';
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
@@ -12,8 +12,6 @@ export interface Context {
     logout: () => void;
   };
 }
-
-const prisma = new PrismaClient({ adapter: new PrismaPg(process.env.DATABASE_URL) });
 
 const parseToken = (token: string) => {
   const parsedToken = token ? jwt.verify(token, process.env.JWT_SECRET) : null;
