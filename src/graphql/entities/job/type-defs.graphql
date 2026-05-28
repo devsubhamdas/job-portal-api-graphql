@@ -49,8 +49,8 @@ type Query {
 }
 
 type Mutation {
-  createJob(input: CreateJobInput): Job!
-  deleteJob(input: DeleteJobInput): Boolean!
-  applyForJob(input: ApplyForJobInput): Boolean!
-  cancelJobApplication(input: CancleJobApplicationInput): Boolean!
+  createJob(input: CreateJobInput!): Job!
+  deleteJob(input: DeleteJobInput!): Boolean!
+  applyForJob(input: ApplyForJobInput!): Boolean!
+  cancelJobApplication(input: CancleJobApplicationInput!): Boolean!
 }

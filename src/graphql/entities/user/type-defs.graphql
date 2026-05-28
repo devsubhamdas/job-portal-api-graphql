@@ -8,8 +8,8 @@ type User {
   name: String!
   email: String!
   role: UserRole!
-  appliedJobs: [Job!]!
-  ownedJobs: [Job!]!
+  appliedJobs: [Job!]
+  ownedJobs: [Job!]
 }
 
 input SignupInput {
@@ -25,11 +25,11 @@ input LoginInput {
 }
 
 type Query {
-  me: User!
+  me: User
 }
 
 type Mutation {
-  signup(input: SignupInput): User!
-  login(input: LoginInput): User!
+  signup(input: SignupInput!): User!
+  login(input: LoginInput!): User!
   logout: Boolean!
 }

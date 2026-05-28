@@ -1,8 +1,10 @@
 import { GraphQLScalarType } from 'graphql';
 import type { GraphQLResolveInfo, GraphQLScalarTypeConfig } from 'graphql';
+import { Job } from '../generated/prisma/client.js';
 import type { Context } from '../graphql/context/context.js';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -11,7 +13,7 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean };
   Int: { input: number; output: number };
   Float: { input: number; output: number };
-  DateTime: { input: unknown; output: unknown };
+  DateTime: { input: Date; output: Date };
 };
 
 export type ApplyForJobInput = {
@@ -80,33 +82,33 @@ export type Mutation = {
 };
 
 export type MutationApplyForJobArgs = {
-  input?: InputMaybe<ApplyForJobInput>;
+  input: ApplyForJobInput;
 };
 
 export type MutationCancelJobApplicationArgs = {
-  input?: InputMaybe<CancleJobApplicationInput>;
+  input: CancleJobApplicationInput;
 };
 
 export type MutationCreateJobArgs = {
-  input?: InputMaybe<CreateJobInput>;
+  input: CreateJobInput;
 };
 
 export type MutationDeleteJobArgs = {
-  input?: InputMaybe<DeleteJobInput>;
+  input: DeleteJobInput;
 };
 
 export type MutationLoginArgs = {
-  input?: InputMaybe<LoginInput>;
+  input: LoginInput;
 };
 
 export type MutationSignupArgs = {
-  input?: InputMaybe<SignupInput>;
+  input: SignupInput;
 };
 
 export type Query = {
   __typename?: 'Query';
   getCompanies: Array<Company>;
-  me: User;
+  me?: Maybe<User>;
   searchJobs: Array<Job>;
 };
 
@@ -127,11 +129,11 @@ export type SignupInput = {
 
 export type User = {
   __typename?: 'User';
-  appliedJobs: Array<Job>;
+  appliedJobs?: Maybe<Array<Job>>;
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  ownedJobs: Array<Job>;
+  ownedJobs?: Maybe<Array<Job>>;
   role: UserRole;
 };
 
@@ -254,7 +256,12 @@ export type ResolversTypes = {
   SearchJobsInput: SearchJobsInput;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
-  User: ResolverTypeWrapper<User>;
+  User: ResolverTypeWrapper<
+    Omit<User, 'appliedJobs' | 'ownedJobs'> & {
+      appliedJobs?: Maybe<Array<ResolversTypes['Job']>>;
+      ownedJobs?: Maybe<Array<ResolversTypes['Job']>>;
+    }
+  >;
   UserRole: UserRole;
 };
 
@@ -276,7 +283,10 @@ export type ResolversParentTypes = {
   SearchJobsInput: SearchJobsInput;
   SignupInput: SignupInput;
   String: Scalars['String']['output'];
-  User: User;
+  User: Omit<User, 'appliedJobs' | 'ownedJobs'> & {
+    appliedJobs?: Maybe<Array<ResolversParentTypes['Job']>>;
+    ownedJobs?: Maybe<Array<ResolversParentTypes['Job']>>;
+  };
 };
 
 export type CompanyResolvers<
@@ -319,29 +329,39 @@ export type MutationResolvers<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    Partial<MutationApplyForJobArgs>
+    RequireFields<MutationApplyForJobArgs, 'input'>
   >;
   cancelJobApplication?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    Partial<MutationCancelJobApplicationArgs>
+    RequireFields<MutationCancelJobApplicationArgs, 'input'>
   >;
   createJob?: Resolver<
     ResolversTypes['Job'],
     ParentType,
     ContextType,
-    Partial<MutationCreateJobArgs>
+    RequireFields<MutationCreateJobArgs, 'input'>
   >;
   deleteJob?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    Partial<MutationDeleteJobArgs>
+    RequireFields<MutationDeleteJobArgs, 'input'>
   >;
-  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationLoginArgs>>;
+  login?: Resolver<
+    ResolversTypes['User'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationLoginArgs, 'input'>
+  >;
   logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  signup?: Resolver<ResolversTypes['User'], ParentType, ContextType, Partial<MutationSignupArgs>>;
+  signup?: Resolver<
+    ResolversTypes['User'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationSignupArgs, 'input'>
+  >;
 };
 
 export type QueryResolvers<
@@ -349,7 +369,7 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query'],
 > = {
   getCompanies?: Resolver<Array<ResolversTypes['Company']>, ParentType, ContextType>;
-  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   searchJobs?: Resolver<
     Array<ResolversTypes['Job']>,
     ParentType,
@@ -362,11 +382,11 @@ export type UserResolvers<
   ContextType = Context,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User'],
 > = {
-  appliedJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  appliedJobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  ownedJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  ownedJobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType>;
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
 };
 

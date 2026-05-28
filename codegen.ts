@@ -8,6 +8,12 @@ const config: CodegenConfig = {
       config: {
         contextType: '../graphql/context/context#Context',
         defaultMappers: 'Partial<T>',
+        mappers: {
+          Job: '../generated/prisma/client#Job',
+        },
+        scalars: {
+          DateTime: 'Date',
+        },
       },
     },
   },
