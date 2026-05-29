@@ -51,8 +51,9 @@ const resolvers: Resolvers = {
           location,
           remote,
           company: {
-            create: {
-              name: companyName,
+            connectOrCreate: {
+              where: { name: companyName },
+              create: { name: companyName },
             },
           },
           owner: {
@@ -67,7 +68,18 @@ const resolvers: Resolvers = {
     },
     deleteJob: async (root, args, context) => {
       if (!context.auth.user?.isAdmin) throw new Error('Unauthorized');
+      // 1. Check job exists
+      const job = await context.prisma.job.findUnique({
+        where: { id: args.input.id },
+      });
 
+      if (!job) throw new Error('Job not found');
+
+      // 2. Check if the user owns the job
+      if (job.ownerId !== context.auth.user.id)
+        throw new Error('Unauthorized: User does not own the job');
+
+      // 3. Delete
       await context.prisma.job.delete({
         where: { id: args.input.id, ownerId: context.auth.user.id },
       });
@@ -77,6 +89,24 @@ const resolvers: Resolvers = {
     applyForJob: async (root, args, context) => {
       if (!context.auth.user) throw new Error('Unauthorized');
 
+      // 1. Check job exists
+      const job = await context.prisma.job.findUnique({
+        where: { id: args.input.id },
+      });
+
+      if (!job) throw new Error('Job not found');
+
+      // 2. Check user hasn't already applied
+      const alreadyApplied = await context.prisma.job.findFirst({
+        where: {
+          id: args.input.id,
+          applicants: { some: { id: context.auth.user.id } },
+        },
+      });
+
+      if (alreadyApplied) throw new Error('Already applied');
+
+      // 3. Connect
       await context.prisma.job.update({
         where: { id: args.input.id },
         data: {
@@ -90,6 +120,25 @@ const resolvers: Resolvers = {
     },
     cancelJobApplication: async (root, args, context) => {
       if (!context.auth.user) throw new Error('Unauthorized');
+
+      // 1. Check job exists
+      const job = await context.prisma.job.findUnique({
+        where: { id: args.input.id },
+      });
+
+      if (!job) throw new Error('Job not found');
+
+      // 2. Check user already applied
+      const alreadyApplied = await context.prisma.job.findFirst({
+        where: {
+          id: args.input.id,
+          applicants: { some: { id: context.auth.user.id } },
+        },
+      });
+
+      if (!alreadyApplied) throw new Error('Not applied');
+
+      // 3. Disconnect
       await context.prisma.job.update({
         where: { id: args.input.id },
         data: {
