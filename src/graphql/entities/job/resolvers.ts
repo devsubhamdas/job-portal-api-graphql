@@ -25,9 +25,9 @@ const resolvers: Resolvers = {
       const jobs = await context.prisma.job.findMany({
         where: {
           OR: [
-            { title: { contains: query } },
-            { description: { contains: query } },
-            { location: { contains: query } },
+            { title: { contains: query, mode: 'insensitive' } },
+            { description: { contains: query, mode: 'insensitive' } },
+            { location: { contains: query, mode: 'insensitive' } },
           ],
         },
       });
