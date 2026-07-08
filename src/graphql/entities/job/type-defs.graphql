@@ -15,7 +15,7 @@ type Job {
   remote: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
-  isApplied: Boolean!
+  isApplied: Boolean
 }
 
 input SearchJobsInput {

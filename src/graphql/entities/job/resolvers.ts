@@ -12,11 +12,12 @@ const resolvers: Resolvers = {
       return company;
     },
     isApplied: async (job, args, context) => {
-      if (!context.auth.user) throw new Error('Unauthorized');
-      const isApplied = await context.prisma.job.count({
+      if (!context.auth.user) return null;
+      const isApplied = await context.prisma.job.findFirst({
         where: { id: job.id, applicants: { some: { id: context.auth.user.id } } },
+        select: { id: true },
       });
-      return isApplied > 0;
+      return !!isApplied;
     },
   },
   Query: {
