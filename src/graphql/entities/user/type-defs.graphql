@@ -26,6 +26,8 @@ input LoginInput {
 
 type Query {
   me: User
+  ownedJobs: [Job!]!
+  appliedJobs: [Job!]!
 }
 
 type Mutation {

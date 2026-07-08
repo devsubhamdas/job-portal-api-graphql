@@ -97,14 +97,14 @@ const resolvers: Resolvers = {
       if (!job) throw new Error('Job not found');
 
       // 2. Check user hasn't already applied
-      const alreadyApplied = await context.prisma.job.findFirst({
+      const hasApplied = await context.prisma.job.findFirst({
         where: {
           id: args.input.id,
           applicants: { some: { id: context.auth.user.id } },
         },
       });
 
-      if (alreadyApplied) throw new Error('Already applied');
+      if (hasApplied) throw new Error('Already applied');
 
       // 3. Connect
       await context.prisma.job.update({
@@ -129,14 +129,14 @@ const resolvers: Resolvers = {
       if (!job) throw new Error('Job not found');
 
       // 2. Check user already applied
-      const alreadyApplied = await context.prisma.job.findFirst({
+      const hasApplied = await context.prisma.job.findFirst({
         where: {
           id: args.input.id,
           applicants: { some: { id: context.auth.user.id } },
         },
       });
 
-      if (!alreadyApplied) throw new Error('Not applied');
+      if (!hasApplied) throw new Error('Not applied');
 
       // 3. Disconnect
       await context.prisma.job.update({

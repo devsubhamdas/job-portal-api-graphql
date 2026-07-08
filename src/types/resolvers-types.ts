@@ -112,8 +112,10 @@ export type MutationSignupArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  appliedJobs: Array<Job>;
   getCompanies: Array<Company>;
   me?: Maybe<User>;
+  ownedJobs: Array<Job>;
   searchJobs: Array<Job>;
 };
 
@@ -297,8 +299,10 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  appliedJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
   getCompanies?: Resolver<Array<ResolversTypes['Company']>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  ownedJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
   searchJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType, RequireFields<QuerySearchJobsArgs, 'input'>>;
 };
 

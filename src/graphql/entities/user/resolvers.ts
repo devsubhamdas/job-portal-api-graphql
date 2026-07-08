@@ -26,6 +26,28 @@ const resolvers: Resolvers = {
         role: user.role as UserRole,
       };
     },
+    ownedJobs: async (_, args, context) => {
+      if (!context.auth.user) return [];
+      return (
+        (
+          await context.prisma.user.findUnique({
+            where: { id: context.auth.user.id },
+            select: { ownedJobs: true },
+          })
+        )?.ownedJobs ?? []
+      );
+    },
+    appliedJobs: async (_, args, context) => {
+      if (!context.auth.user) return [];
+      return (
+        (
+          await context.prisma.user.findUnique({
+            where: { id: context.auth.user.id },
+            select: { appliedJobs: true },
+          })
+        )?.appliedJobs ?? []
+      );
+    },
   },
   Mutation: {
     signup: async (root, args, context) => {
