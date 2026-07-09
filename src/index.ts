@@ -6,10 +6,12 @@ import cookieParser from 'cookie-parser';
 import { expressMiddleware } from '@as-integrations/express5';
 import schema from './graphql/schema/schema.js';
 import createContext from './graphql/context/context.js';
+import { prisma } from './lib/prisma.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const HOSTNAME = process.env.HOSTNAME || 'localhost';
+const APOLLO_ORIGIN = `http://localhost:${PORT}`;
 
 // apollo config
 const server = new ApolloServer({
@@ -19,7 +21,7 @@ const server = new ApolloServer({
 async function startServer() {
   await server.start();
 
-  const allowedOrigins = [process.env.ORIGIN_1, process.env.ORIGIN_2, 'http://localhost:8081'];
+  const allowedOrigins = [process.env.ORIGIN_1, process.env.ORIGIN_2, APOLLO_ORIGIN];
   if (allowedOrigins.length === 0) {
     console.warn('Warning: No ORIGIN_1/ORIGIN_2 set — all browser origins will be blocked');
   }
@@ -47,6 +49,30 @@ async function startServer() {
       context: ({ req, res }) => createContext({ req, res }),
     })
   );
+
+  // Server health
+  app.get('/health', (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      uptime: process.uptime(),
+    });
+  });
+
+  // Database readiness
+  app.get('/ready', async (req, res) => {
+    try {
+      await prisma.$queryRaw`SELECT 1`;
+
+      res.status(200).json({
+        status: 'ok',
+        message: 'database available',
+      });
+    } catch (error) {
+      res.status(503).json({
+        status: 'database unavailable',
+      });
+    }
+  });
 
   app.listen(PORT, () => {
     console.log(`server running at http://${HOSTNAME}:${PORT}/graphql`);
