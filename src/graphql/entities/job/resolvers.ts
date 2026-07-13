@@ -13,11 +13,7 @@ const resolvers: Resolvers = {
     },
     isApplied: async (job, args, context) => {
       if (!context.auth.user) return null;
-      const isApplied = await context.prisma.job.findFirst({
-        where: { id: job.id, applicants: { some: { id: context.auth.user.id } } },
-        select: { id: true },
-      });
-      return !!isApplied;
+      return await context.dataloaders.isAppliedForJob.load(job.id);
     },
   },
   Query: {

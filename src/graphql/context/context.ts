@@ -3,6 +3,7 @@ import { prisma } from '../../lib/prisma.js';
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import createDataloaders from '../../dataloaders/index.js';
 
 export interface Context {
   prisma: PrismaClient;
@@ -11,6 +12,7 @@ export interface Context {
     login: (args: { id: string; isAdmin: boolean }) => void;
     logout: () => void;
   };
+  dataloaders: ReturnType<typeof createDataloaders>;
 }
 
 const parseToken = (token: string) => {
@@ -47,6 +49,7 @@ const createContext = async ({ req, res }: { req: Request; res: Response }): Pro
         res.clearCookie('token');
       },
     },
+    dataloaders: createDataloaders({ prisma, userId: user?.id }),
   };
 };
 

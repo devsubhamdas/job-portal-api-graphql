@@ -8,7 +8,7 @@ const resolvers: Resolvers = {
         where: { applicants: { some: { id: user.id } } },
       });
     },
-    ownedJobs: (user, args, context) => {
+    ownedJobs: async (user, args, context) => {
       if (!context.auth.user?.isAdmin) return [];
       return context.prisma.job.findMany({ where: { ownerId: user.id } });
     },
