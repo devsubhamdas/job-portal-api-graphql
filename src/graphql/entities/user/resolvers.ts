@@ -32,7 +32,7 @@ const resolvers: Resolvers = {
         (
           await context.prisma.user.findUnique({
             where: { id: context.auth.user.id },
-            select: { ownedJobs: true },
+            select: { ownedJobs: { orderBy: { createdAt: 'desc' } } },
           })
         )?.ownedJobs ?? []
       );
@@ -43,7 +43,7 @@ const resolvers: Resolvers = {
         (
           await context.prisma.user.findUnique({
             where: { id: context.auth.user.id },
-            select: { appliedJobs: true },
+            select: { appliedJobs: { orderBy: { createdAt: 'desc' } } },
           })
         )?.appliedJobs ?? []
       );
