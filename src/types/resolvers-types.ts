@@ -125,6 +125,8 @@ export type QuerySearchJobsArgs = {
 };
 
 export type SearchJobsInput = {
+  cursor?: InputMaybe<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
   query: Scalars['String']['input'];
 };
 

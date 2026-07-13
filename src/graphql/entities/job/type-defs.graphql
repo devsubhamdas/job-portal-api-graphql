@@ -20,6 +20,8 @@ type Job {
 
 input SearchJobsInput {
   query: String!
+  cursor: String
+  limit: Int
 }
 
 input CreateJobInput {
