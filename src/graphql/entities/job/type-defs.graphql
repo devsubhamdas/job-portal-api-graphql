@@ -20,7 +20,7 @@ type Job {
 
 input SearchJobsInput {
   query: String!
-  cursor: String
+  cursor: ID
   limit: Int
 }
 
@@ -46,8 +46,18 @@ input CancleJobApplicationInput {
   id: ID!
 }
 
+type Meta {
+  hasMore: Boolean!
+  nextCursor: ID
+}
+
+type SearchJobsResponse {
+  data: [Job!]!
+  meta: Meta!
+}
+
 type Query {
-  searchJobs(input: SearchJobsInput!): [Job!]!
+  searchJobs(input: SearchJobsInput!): SearchJobsResponse!
 }
 
 type Mutation {

@@ -58,6 +58,17 @@ export type Job = {
   updatedAt: Scalars['DateTime']['output'];
 };
 
+export type JobConnectionInput = {
+  cursor?: InputMaybe<Scalars['ID']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+};
+
+export type JobConnectionResponse = {
+  __typename?: 'JobConnectionResponse';
+  data: Array<Job>;
+  meta: Meta;
+};
+
 export enum JobType {
   FullTime = 'FULL_TIME',
   Internship = 'INTERNSHIP',
@@ -67,6 +78,12 @@ export enum JobType {
 export type LoginInput = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+export type Meta = {
+  __typename?: 'Meta';
+  hasMore: Scalars['Boolean']['output'];
+  nextCursor?: Maybe<Scalars['ID']['output']>;
 };
 
 export type Mutation = {
@@ -112,11 +129,21 @@ export type MutationSignupArgs = {
 
 export type Query = {
   __typename?: 'Query';
-  appliedJobs: Array<Job>;
+  appliedJobs: JobConnectionResponse;
   getCompanies: Array<Company>;
   me?: Maybe<User>;
-  ownedJobs: Array<Job>;
-  searchJobs: Array<Job>;
+  ownedJobs: JobConnectionResponse;
+  searchJobs: SearchJobsResponse;
+};
+
+
+export type QueryAppliedJobsArgs = {
+  input: JobConnectionInput;
+};
+
+
+export type QueryOwnedJobsArgs = {
+  input: JobConnectionInput;
 };
 
 
@@ -125,9 +152,15 @@ export type QuerySearchJobsArgs = {
 };
 
 export type SearchJobsInput = {
-  cursor?: InputMaybe<Scalars['String']['input']>;
+  cursor?: InputMaybe<Scalars['ID']['input']>;
   limit?: InputMaybe<Scalars['Int']['input']>;
   query: Scalars['String']['input'];
+};
+
+export type SearchJobsResponse = {
+  __typename?: 'SearchJobsResponse';
+  data: Array<Job>;
+  meta: Meta;
 };
 
 export type SignupInput = {
@@ -235,11 +268,15 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Job: ResolverTypeWrapper<PrismaJob>;
+  JobConnectionInput: JobConnectionInput;
+  JobConnectionResponse: ResolverTypeWrapper<Omit<JobConnectionResponse, 'data'> & { data: Array<ResolversTypes['Job']> }>;
   JobType: JobType;
   LoginInput: LoginInput;
+  Meta: ResolverTypeWrapper<Meta>;
   Mutation: ResolverTypeWrapper<Record<PropertyKey, never>>;
   Query: ResolverTypeWrapper<Record<PropertyKey, never>>;
   SearchJobsInput: SearchJobsInput;
+  SearchJobsResponse: ResolverTypeWrapper<Omit<SearchJobsResponse, 'data'> & { data: Array<ResolversTypes['Job']> }>;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   User: ResolverTypeWrapper<Omit<User, 'appliedJobs' | 'ownedJobs'> & { appliedJobs?: Maybe<Array<ResolversTypes['Job']>>, ownedJobs?: Maybe<Array<ResolversTypes['Job']>> }>;
@@ -258,10 +295,14 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']['output'];
   Int: Scalars['Int']['output'];
   Job: PrismaJob;
+  JobConnectionInput: JobConnectionInput;
+  JobConnectionResponse: Omit<JobConnectionResponse, 'data'> & { data: Array<ResolversParentTypes['Job']> };
   LoginInput: LoginInput;
+  Meta: Meta;
   Mutation: Record<PropertyKey, never>;
   Query: Record<PropertyKey, never>;
   SearchJobsInput: SearchJobsInput;
+  SearchJobsResponse: Omit<SearchJobsResponse, 'data'> & { data: Array<ResolversParentTypes['Job']> };
   SignupInput: SignupInput;
   String: Scalars['String']['output'];
   User: Omit<User, 'appliedJobs' | 'ownedJobs'> & { appliedJobs?: Maybe<Array<ResolversParentTypes['Job']>>, ownedJobs?: Maybe<Array<ResolversParentTypes['Job']>> };
@@ -290,6 +331,16 @@ export type JobResolvers<ContextType = Context, ParentType extends ResolversPare
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
 };
 
+export type JobConnectionResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['JobConnectionResponse'] = ResolversParentTypes['JobConnectionResponse']> = {
+  data?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
+};
+
+export type MetaResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Meta'] = ResolversParentTypes['Meta']> = {
+  hasMore?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  nextCursor?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   applyForJob?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationApplyForJobArgs, 'input'>>;
   cancelJobApplication?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelJobApplicationArgs, 'input'>>;
@@ -301,11 +352,16 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  appliedJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  appliedJobs?: Resolver<ResolversTypes['JobConnectionResponse'], ParentType, ContextType, RequireFields<QueryAppliedJobsArgs, 'input'>>;
   getCompanies?: Resolver<Array<ResolversTypes['Company']>, ParentType, ContextType>;
   me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  ownedJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
-  searchJobs?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType, RequireFields<QuerySearchJobsArgs, 'input'>>;
+  ownedJobs?: Resolver<ResolversTypes['JobConnectionResponse'], ParentType, ContextType, RequireFields<QueryOwnedJobsArgs, 'input'>>;
+  searchJobs?: Resolver<ResolversTypes['SearchJobsResponse'], ParentType, ContextType, RequireFields<QuerySearchJobsArgs, 'input'>>;
+};
+
+export type SearchJobsResponseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['SearchJobsResponse'] = ResolversParentTypes['SearchJobsResponse']> = {
+  data?: Resolver<Array<ResolversTypes['Job']>, ParentType, ContextType>;
+  meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
 };
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
@@ -321,8 +377,11 @@ export type Resolvers<ContextType = Context> = {
   Company?: CompanyResolvers<ContextType>;
   DateTime?: GraphQLScalarType;
   Job?: JobResolvers<ContextType>;
+  JobConnectionResponse?: JobConnectionResponseResolvers<ContextType>;
+  Meta?: MetaResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  SearchJobsResponse?: SearchJobsResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

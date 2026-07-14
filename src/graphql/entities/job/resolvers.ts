@@ -19,6 +19,7 @@ const resolvers: Resolvers = {
   Query: {
     searchJobs: async (root, args, context) => {
       const { query, cursor, limit } = args.input;
+      const take = limit ?? 10;
       const jobs = await context.prisma.job.findMany({
         where: {
           OR: [
@@ -30,11 +31,15 @@ const resolvers: Resolvers = {
         orderBy: {
           createdAt: 'desc',
         },
-        take: limit ?? 10,
+        take: take + 1,
         ...(cursor && { cursor: { id: cursor }, skip: 1 }),
       });
 
-      return jobs;
+      const hasMore = jobs.length > take;
+      const data = hasMore ? jobs.slice(0, take) : jobs;
+      const nextCursor = data.at(-1)?.id ?? null;
+
+      return { data, meta: { hasMore, nextCursor } };
     },
   },
   Mutation: {

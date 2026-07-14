@@ -24,10 +24,25 @@ input LoginInput {
   password: String!
 }
 
+type Meta {
+  hasMore: Boolean!
+  nextCursor: ID
+}
+
+type JobConnectionResponse {
+  data: [Job!]!
+  meta: Meta!
+}
+
+input JobConnectionInput {
+  cursor: ID
+  limit: Int
+}
+
 type Query {
   me: User
-  ownedJobs: [Job!]!
-  appliedJobs: [Job!]!
+  ownedJobs(input: JobConnectionInput!): JobConnectionResponse!
+  appliedJobs(input: JobConnectionInput!): JobConnectionResponse!
 }
 
 type Mutation {

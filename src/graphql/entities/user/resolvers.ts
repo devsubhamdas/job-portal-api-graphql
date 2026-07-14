@@ -27,26 +27,64 @@ const resolvers: Resolvers = {
       };
     },
     ownedJobs: async (_, args, context) => {
-      if (!context.auth.user) return [];
-      return (
+      if (!context.auth.user) return { data: [], meta: { hasMore: false, nextCursor: null } };
+      const { cursor, limit } = args.input;
+      const take = limit ?? 10;
+      const jobs =
         (
           await context.prisma.user.findUnique({
             where: { id: context.auth.user.id },
-            select: { ownedJobs: { orderBy: { createdAt: 'desc' } } },
+            select: {
+              ownedJobs: {
+                orderBy: { createdAt: 'desc' },
+                take: take + 1,
+                ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+              },
+            },
           })
-        )?.ownedJobs ?? []
-      );
+        )?.ownedJobs ?? [];
+
+      const hasMore = jobs.length > take;
+      const data = hasMore ? jobs.slice(0, take) : jobs;
+      const nextCursor = data.at(-1)?.id ?? null;
+
+      return {
+        data,
+        meta: {
+          hasMore,
+          nextCursor,
+        },
+      };
     },
     appliedJobs: async (_, args, context) => {
-      if (!context.auth.user) return [];
-      return (
+      if (!context.auth.user) return { data: [], meta: { hasMore: false, nextCursor: null } };
+      const { cursor, limit } = args.input;
+      const take = limit ?? 10;
+      const jobs =
         (
           await context.prisma.user.findUnique({
             where: { id: context.auth.user.id },
-            select: { appliedJobs: { orderBy: { createdAt: 'desc' } } },
+            select: {
+              appliedJobs: {
+                orderBy: { createdAt: 'desc' },
+                take: take + 1,
+                ...(cursor && { cursor: { id: cursor }, skip: 1 }),
+              },
+            },
           })
-        )?.appliedJobs ?? []
-      );
+        )?.appliedJobs ?? [];
+
+      const hasMore = jobs.length > take;
+      const data = hasMore ? jobs.slice(0, take) : jobs;
+      const nextCursor = data.at(-1)?.id ?? null;
+
+      return {
+        data,
+        meta: {
+          hasMore,
+          nextCursor,
+        },
+      };
     },
   },
   Mutation: {
