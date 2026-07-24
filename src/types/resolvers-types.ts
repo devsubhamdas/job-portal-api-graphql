@@ -170,6 +170,11 @@ export type SignupInput = {
   role: UserRole;
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  jobCreated: Job;
+};
+
 export type User = {
   __typename?: 'User';
   appliedJobs?: Maybe<Array<Job>>;
@@ -279,6 +284,7 @@ export type ResolversTypes = {
   SearchJobsResponse: ResolverTypeWrapper<Omit<SearchJobsResponse, 'data'> & { data: Array<ResolversTypes['Job']> }>;
   SignupInput: SignupInput;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Subscription: ResolverTypeWrapper<Record<PropertyKey, never>>;
   User: ResolverTypeWrapper<Omit<User, 'appliedJobs' | 'ownedJobs'> & { appliedJobs?: Maybe<Array<ResolversTypes['Job']>>, ownedJobs?: Maybe<Array<ResolversTypes['Job']>> }>;
   UserRole: UserRole;
 };
@@ -305,6 +311,7 @@ export type ResolversParentTypes = {
   SearchJobsResponse: Omit<SearchJobsResponse, 'data'> & { data: Array<ResolversParentTypes['Job']> };
   SignupInput: SignupInput;
   String: Scalars['String']['output'];
+  Subscription: Record<PropertyKey, never>;
   User: Omit<User, 'appliedJobs' | 'ownedJobs'> & { appliedJobs?: Maybe<Array<ResolversParentTypes['Job']>>, ownedJobs?: Maybe<Array<ResolversParentTypes['Job']>> };
 };
 
@@ -364,6 +371,10 @@ export type SearchJobsResponseResolvers<ContextType = Context, ParentType extend
   meta?: Resolver<ResolversTypes['Meta'], ParentType, ContextType>;
 };
 
+export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  jobCreated?: SubscriptionResolver<ResolversTypes['Job'], "jobCreated", ParentType, ContextType>;
+};
+
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   appliedJobs?: Resolver<Maybe<Array<ResolversTypes['Job']>>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -382,6 +393,7 @@ export type Resolvers<ContextType = Context> = {
   Mutation?: MutationResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   SearchJobsResponse?: SearchJobsResponseResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

@@ -1,6 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
 import { ApolloServer } from '@apollo/server';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/use/ws';
+import http from 'http';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { expressMiddleware } from '@as-integrations/express5';
@@ -8,15 +11,29 @@ import schema from './graphql/schema/schema.js';
 import createContext from './graphql/context/context.js';
 import { prisma } from './lib/prisma.js';
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 const HOSTNAME = process.env.HOSTNAME || 'localhost';
 const APOLLO_ORIGIN = `http://localhost:${PORT}`;
+const app = express();
+
+const httpServer = http.createServer(app);
+const wsServer = new WebSocketServer({
+  server: httpServer,
+  path: '/graphql',
+});
 
 // apollo config
 const server = new ApolloServer({
-  schema: schema,
+  schema,
 });
+
+useServer(
+  {
+    schema,
+    context: async (ctx) => createContext(), // { req, res } is not available
+  },
+  wsServer
+);
 
 async function startServer() {
   await server.start();
@@ -74,8 +91,9 @@ async function startServer() {
     }
   });
 
-  app.listen(PORT, () => {
-    console.log(`server running at http://${HOSTNAME}:${PORT}/graphql`);
+  httpServer.listen(PORT, () => {
+    console.log(`http server is running at http://${HOSTNAME}:${PORT}/graphql`);
+    console.log(`websocket server is running at ws://${HOSTNAME}:${PORT}/graphql`);
   });
 }
 

@@ -42,6 +42,13 @@ const resolvers: Resolvers = {
       return { data, meta: { hasMore, nextCursor } };
     },
   },
+  Subscription: {
+    jobCreated: {
+      subscribe: (_, __, context) => {
+        return context.pubsub.asyncIterableIterator('JOB_CREATED');
+      },
+    },
+  },
   Mutation: {
     createJob: async (root, args, context) => {
       if (!context.auth.user?.isAdmin) {
@@ -70,6 +77,11 @@ const resolvers: Resolvers = {
             },
           },
         },
+      });
+
+      // publish job
+      context.pubsub.publish('JOB_CREATED', {
+        jobCreated: job,
       });
 
       return job;

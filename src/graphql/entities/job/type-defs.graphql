@@ -60,6 +60,10 @@ type Query {
   searchJobs(input: SearchJobsInput!): SearchJobsResponse!
 }
 
+type Subscription {
+  jobCreated: Job!
+}
+
 type Mutation {
   createJob(input: CreateJobInput!): Job!
   deleteJob(input: DeleteJobInput!): Boolean!
