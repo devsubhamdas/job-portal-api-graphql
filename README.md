@@ -43,7 +43,7 @@ The API provides authentication, job posting and application management, applica
 
 ```bash
 git clone https://github.com/devsubhamdas/job-portal-api-graphql
-cd jobportal-api
+cd job-portal-api-graphql
 ```
 
 ### 2. Install dependencies
