@@ -119,7 +119,7 @@ npm run codegen
 
 ## Associated Repository
 
-**Job Portal Frontend**: [job-portal-ui]("https://github.com/devsubhamdas/job-portal-ui")
+**Job Portal Frontend**: [job-portal-ui](https://github.com/devsubhamdas/job-portal-ui)
 
 ## Project Purpose
 
