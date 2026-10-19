@@ -13,7 +13,6 @@ import { prisma } from './lib/prisma.js';
 
 const PORT = process.env.PORT || 3000;
 const HOSTNAME = process.env.HOSTNAME || 'localhost';
-const APOLLO_ORIGIN = `http://localhost:${PORT}`;
 const app = express();
 
 const httpServer = http.createServer(app);
@@ -38,9 +37,10 @@ useServer(
 async function startServer() {
   await server.start();
 
-  const allowedOrigins = [process.env.ORIGIN_1, process.env.ORIGIN_2, APOLLO_ORIGIN];
+  const allowedOrigins = String(process.env.ALLOWED_ORIGINS).split(',');
+
   if (allowedOrigins.length === 0) {
-    console.warn('Warning: No ORIGIN_1/ORIGIN_2 set — all browser origins will be blocked');
+    console.warn('Warning: No ALLOWED_ORIGINS set — all browser origins will be blocked');
   }
 
   app.use(
