@@ -92,8 +92,8 @@ async function startServer() {
   });
 
   httpServer.listen(PORT, () => {
-    console.log(`http server is running at http://${HOSTNAME}:${PORT}/graphql`);
-    console.log(`websocket server is running at ws://${HOSTNAME}:${PORT}/graphql`);
+    console.log(`http server is running at :${PORT}/graphql`);
+    console.log(`websocket server is running at :${PORT}/graphql`);
   });
 }
 
