@@ -46,11 +46,15 @@ const createContext = async (ctx?: { req: Request; res: Response }): Promise<Con
     auth: {
       user,
       login: (args) => {
-        const token = jwt.sign(args, process.env.JWT_SECRET);
+        const token = jwt.sign(args, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const isProd = process.env.ENV === 'production';
         ctx?.res.cookie('token', token, {
-          domain: 'localhost',
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+          domain: !isProd ? 'localhost' : undefined,
+          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // expires: 7d
           httpOnly: true,
+          secure: isProd,
+          sameSite: isProd ? 'none' : 'lax',
+          path: '/',
         });
       },
       logout: () => {
