@@ -41,24 +41,26 @@ const createContext = async (ctx?: { req: Request; res: Response }): Promise<Con
   const token = ctx?.req.cookies?.token;
   const user = parseToken(token);
 
+  const isProd = process.env.ENV === 'production';
+  const cookieOptions = {
+    domain: !isProd ? 'localhost' : undefined,
+    expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // expires: 7d
+    httpOnly: true,
+    secure: isProd,
+    sameSite: (isProd ? 'none' : 'lax') as 'none' | 'lax',
+    path: '/',
+  };
+
   return {
     prisma,
     auth: {
       user,
       login: (args) => {
         const token = jwt.sign(args, process.env.JWT_SECRET, { expiresIn: '7d' });
-        const isProd = process.env.ENV === 'production';
-        ctx?.res.cookie('token', token, {
-          domain: !isProd ? 'localhost' : undefined,
-          expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7), // expires: 7d
-          httpOnly: true,
-          secure: isProd,
-          sameSite: isProd ? 'none' : 'lax',
-          path: '/',
-        });
+        ctx?.res.cookie('token', token, cookieOptions);
       },
       logout: () => {
-        ctx?.res.clearCookie('token');
+        ctx?.res.clearCookie('token', cookieOptions);
       },
     },
     dataloaders: createDataloaders({ prisma, userId: user?.id }),
