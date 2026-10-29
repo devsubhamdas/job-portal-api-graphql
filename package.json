@@ -33,7 +33,7 @@
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "graphql": "^16.14.0",
-    "graphql-scalars": "^1.25.0",
+    "graphql-scalars": "^2.0.1",
     "graphql-subscriptions": "^3.0.0",
     "graphql-ws": "^6.1.1",
     "jsonwebtoken": "^9.0.3",
@@ -54,5 +54,13 @@
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3"
+  },
+  "allowScripts": {
+    "@apollo/protobufjs@1.2.8": true,
+    "@prisma/engines@7.10.1": true,
+    "bcrypt@6.0.0": true,
+    "esbuild@0.28.2": true,
+    "fsevents@2.3.3": true,
+    "prisma": false
   }
 }
